@@ -1,19 +1,14 @@
-import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import React, { Suspense } from 'react'
 
-import { FirebaseProvider } from './contexts/FirebaseContext';
-
-import routes, { renderRoutes } from './routes';
-import { BASENAME } from './config/constant';
+// ** Router Import
+import Router from './router/Router'
 
 const App = () => {
   return (
-    <React.Fragment>
-      <Router basename={BASENAME}>
-        <FirebaseProvider>{renderRoutes(routes)}</FirebaseProvider>
-      </Router>
-    </React.Fragment>
-  );
-};
+    <Suspense fallback={null}>
+      <Router />
+    </Suspense>
+  )
+}
 
-export default App;
+export default App

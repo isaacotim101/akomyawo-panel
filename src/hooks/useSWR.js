@@ -13,6 +13,11 @@ export const useFetch = () => {
         const response = await api.getBlogs();
         return response;
       }),
+      GetUpdates: () =>
+      useSWR("allUpdates", async () => {
+        const response = await api.getUpdates();
+        return response;
+      }),
       GettotalCauses: () =>
       useSWR("allPosts", async () => {
         const res = await api.getTotalCauses();
