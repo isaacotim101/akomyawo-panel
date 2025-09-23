@@ -94,10 +94,10 @@ const LoginBasic = () => {
           <CardBody>
             <Link className='brand-logo' to='/' onClick={e => e.preventDefault()}>
               
-              <h2 className='brand-text text-primary ms-1'>African Hearts</h2>
+              <h2 className='brand-text text-primary ms-1'>Admin Panel</h2>
             </Link>
             <CardTitle tag='h4' className='mb-1'>
-              Welcome to African Hearts! 👋
+              Welcome Admin! 👋
             </CardTitle>
             <CardText className='mb-2'>Please sign-in to your account and start the adventure</CardText>
              <Form className='auth-login-form mt-2' onSubmit={handleSubmit(onSubmit)}>
