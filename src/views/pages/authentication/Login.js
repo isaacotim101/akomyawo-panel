@@ -3,17 +3,17 @@ import { Link, useNavigate } from 'react-router-dom'
 
 // ** Custom Hooks
 import { useSkin } from '@hooks/useSkin'
-import useJwt from '@src/auth/jwt/useJwt'
+
+// ** Supabase
+import { createClient } from '@supabase/supabase-js'
 
 // ** Third Party Components
 import toast from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
 import { useForm, Controller } from 'react-hook-form'
-//import axios from 'axios'
-import React, { useState } from 'react';
+import React from 'react'
 
 import { HelpCircle } from 'react-feather'
-// ** Custom Components
 // ** Actions
 import { handleLogin } from '@store/authentication'
 
@@ -25,82 +25,117 @@ import InputPasswordToggle from '@components/input-password-toggle'
 
 // ** Utils
 import { getHomeRouteForLoggedInUser } from '@utils'
+
 // ** Reactstrap Imports
-//import { Card, CardBody, CardTitle, CardText, Form, Label, Input, Button, Alert } from 'reactstrap'
 import {
   Form,
   Input,
   Label,
-  Alert,
   Button,
-  CardText, Card, 
-  CardTitle, CardBody,
-  FormFeedback,
-  UncontrolledTooltip
+  CardText,
+  Card,
+  CardTitle,
+  CardBody,
+  FormFeedback
 } from 'reactstrap'
+
 // ** Styles
 import '@styles/react/pages/page-authentication.scss'
-const defaultValues = {
-  password: 'Admin',
-  loginEmail: 'test@africanhearts.co'
-}
-const LoginBasic = () => {
 
-    const { skin } = useSkin()
-    const dispatch = useDispatch()
-    const navigate = useNavigate()
-    const ability = useContext(AbilityContext)
-    const {
-      control,
-      setError,
-      handleSubmit,
-      formState: { errors }
-    } = useForm({ defaultValues })
-  
-  
-    const onSubmit = data => {
-      if (Object.values(data).every(field => field.length > 0)) {
-        useJwt
-          .login({ email: data.loginEmail, password: data.password })
-          .then(res => {
-            const data = { ...res.data.userData, accessToken: res.data.accessToken, refreshToken: res.data.refreshToken }
-            dispatch(handleLogin(data))
-            ability.update(res.data.userData.ability)
-            navigate(getHomeRouteForLoggedInUser(data.role))
-            toast(t => (
-              <ToastContent t={t} role={data.role || 'admin'} name={data.fullName || data.username || 'Admin Account'} />
-            ))
+// 🔑 Setup Supabase client (better to move into a separate file)
+const supabase = createClient(
+  process.env.REACT_APP_SUPABASE_URL,
+  process.env.REACT_APP_SUPABASE_ANON_KEY
+)
+
+const defaultValues = {
+  password: '',
+  loginEmail: ''
+}
+
+const LoginBasic = () => {
+  const { skin } = useSkin()
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const ability = useContext(AbilityContext)
+
+  const {
+    control,
+    setError,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({ defaultValues })
+
+  const onSubmit = async data => {
+    if (Object.values(data).every(field => field.length > 0)) {
+      try {
+        const { data: authData, error } = await supabase.auth.signInWithPassword({
+          email: data.loginEmail,
+          password: data.password
+        })
+
+        if (error) {
+          setError('loginEmail', {
+            type: 'manual',
+            message: error.message
           })
-          .catch(err => setError('loginEmail', {
-              type: 'manual',
-              message: err.response.data.error
-            })
-          )
-      } else {
-        for (const key in data) {
-          if (data[key].length === 0) {
-            setError(key, {
-              type: 'manual'
-            })
+          return
+        }
+
+        const user = authData.user
+        const session = authData.session
+
+        if (user && session) {
+          const loginPayload = {
+            ...user,
+            accessToken: session.access_token,
+            refreshToken: session.refresh_token
           }
+
+          // Store in redux
+          dispatch(handleLogin(loginPayload))
+
+          // Update ability if you have roles stored in metadata
+          ability.update(user.app_metadata?.ability || [])
+
+          // Redirect to dashboard/home
+          navigate(getHomeRouteForLoggedInUser(user.role || 'admin'))
+
+          // Success toast
+          toast.success(`Welcome back, ${user.email}!`)
+        }
+      } catch (err) {
+        setError('loginEmail', {
+          type: 'manual',
+          message: err.message || 'Login failed'
+        })
+      }
+    } else {
+      for (const key in data) {
+        if (data[key].length === 0) {
+          setError(key, {
+            type: 'manual'
+          })
         }
       }
     }
-  
+  }
+
   return (
     <div className='auth-wrapper auth-basic px-2'>
       <div className='auth-inner my-2'>
         <Card className='mb-0'>
           <CardBody>
             <Link className='brand-logo' to='/' onClick={e => e.preventDefault()}>
-              
-              <h2 className='brand-text text-primary ms-1'>African Hearts</h2>
+              <h2 className='brand-text text-primary ms-1'>Admin Panel</h2>
             </Link>
             <CardTitle tag='h4' className='mb-1'>
-              Welcome to African Hearts! 👋
+              Welcome Admin! 👋
             </CardTitle>
-            <CardText className='mb-2'>Please sign-in to your account and start the adventure</CardText>
-             <Form className='auth-login-form mt-2' onSubmit={handleSubmit(onSubmit)}>
+            <CardText className='mb-2'>
+              Please sign-in to your account and start the adventure
+            </CardText>
+            <Form className='auth-login-form mt-2' onSubmit={handleSubmit(onSubmit)}>
               <div className='mb-1'>
                 <Label className='form-label' for='login-email'>
                   Email
@@ -119,7 +154,9 @@ const LoginBasic = () => {
                     />
                   )}
                 />
-                {errors.loginEmail && <FormFeedback>{errors.loginEmail.message}</FormFeedback>}
+                {errors.loginEmail && (
+                  <FormFeedback>{errors.loginEmail.message}</FormFeedback>
+                )}
               </div>
               <div className='mb-1'>
                 <div className='d-flex justify-content-between'>
@@ -135,7 +172,11 @@ const LoginBasic = () => {
                   name='password'
                   control={control}
                   render={({ field }) => (
-                    <InputPasswordToggle className='input-group-merge' invalid={errors.password && true} {...field} />
+                    <InputPasswordToggle
+                      className='input-group-merge'
+                      invalid={errors.password && true}
+                      {...field}
+                    />
                   )}
                 />
               </div>
