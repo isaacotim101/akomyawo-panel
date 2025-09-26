@@ -44,17 +44,17 @@ const BlogList = () => {
       return (
         <Col md='6'>
           <Card>
-            <Link to={`/pages/blog/detail/12`}>
-              <CardImg className='img-fluid' src={gallery.gallery_image} alt="The Best Features Coming to iOS and Web design" top />
-            </Link>
+            
+              <CardImg className='img-fluid' src={gallery.image_url} alt="The Best Features Coming to iOS and Web design" top />
+            
             <CardBody>
-              <CardTitle tag='h4'>Catergory: 
+              <CardTitle tag='h4'>category: 
                 <Badge
                 className={classnames('me-50')}
                 color='light-warning'
                 pill
               >
-                {gallery.gallery_catergory}
+                {gallery.category}
               </Badge>
               </CardTitle>
               <hr />
@@ -64,7 +64,7 @@ const BlogList = () => {
                     <Grid size={14} /> Actions
                   </DropdownToggle>
                   <DropdownMenu tag='ul' end>
-                    <DropdownItem tag={Link} to={`/delete?id=${gallery._id}&route=gallerys`}>
+                    <DropdownItem tag={Link} to={`/delete?id=${gallery.id}&route=gallerys`}>
                       <MessageSquare className='me-1' size={14} />
                       <span className='align-middle'>Delete</span>
                     </DropdownItem>

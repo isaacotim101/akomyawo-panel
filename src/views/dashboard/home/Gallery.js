@@ -16,7 +16,7 @@ const Gallary = () => {
 
   useEffect(() => {
     // Fetch data from the API
-    fetch('https://african-hearts-api.vercel.app/api/v1/gallerys')
+    fetch('https://ako-api.vercel.app/galleries')
       .then((response) => response.json())
       .then((data) => {
         // Assuming the API response is an array of success

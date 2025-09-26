@@ -14,7 +14,7 @@ const NewsArticles = () => {
 
   useEffect(() => {
     // Fetch data from the API
-    fetch('https://african-hearts-api.vercel.app/api/v1/blogs')
+    fetch('https://ako-api.vercel.app/posts')
       .then((response) => response.json())
       .then((data) => {
         // Assuming the API response has a property 'count' that represents the article count
@@ -31,8 +31,8 @@ const NewsArticles = () => {
       <Card>
         <CardBody className='text-center'>
           <FileText className='font-large-2 mb-1' />
-          <CardTitle tag='h5'>News Articles</CardTitle>
-          <CardText>News and Blog articles of the Organisation can be added, edited, and deleted under this section.</CardText>
+          <CardTitle tag='h5'>Blog Articles</CardTitle>
+          <CardText>Blog articles of the Organisation can be added, edited, and deleted under this section.</CardText>
           <h1 color='primary'>{articleCount} Articles</h1>
           
           <Link className='blog-title-truncate text-body-heading' to={`/articles`}>

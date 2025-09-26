@@ -19,23 +19,11 @@ const HomeDashboard = () => {
   return (
     <Fragment>
       <Row className='match-height'>
-        <Col md='4'>
+        <Col md='6'>
           <NewsArticles />
         </Col>
-        <Col md='4'>
-          <Campaigns />
-        </Col>
-        <Col md='4'>
-          <Success />
-        </Col>
-        <Col md='4'>
-          <Projects />
-        </Col>
-        <Col md='4'>
+        <Col md='6'>
           <Gallary />
-        </Col>
-        <Col md='4'>
-          <TeamMembers />
         </Col>
       </Row>
     </Fragment>
