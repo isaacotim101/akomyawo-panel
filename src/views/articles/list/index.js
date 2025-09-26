@@ -47,31 +47,19 @@ const BlogList = () => {
       return (
         <Col md='6'>
           <Card>
-            <Link to={`/pages/blog/detail/12`}>
-              <CardImg className='img-fluid' src={news.post_featured_image} alt={news.post_title} top />
+            <Link to={`/articles/detail/${news.id}`}>
+              <CardImg className='img-fluid' src={news.image_url} alt={news.title} top />
             </Link>
             <CardBody>
               <CardTitle tag='h4'>
-                <Link className='blog-title-truncate text-body-heading' to={`/articles/detail/${news._id}`}>
-                {news.post_title}
+                <Link className='blog-title-truncate text-body-heading' to={`/articles/detail/${news.id}`}>
+                {news.title}
                 </Link>
               </CardTitle>
-              <div className='d-flex'>
-                <div>
-                  <small className='text-muted me-25'>By</small>
-                  <small>
-                    <a className='text-body' href='/' onClick={e => e.preventDefault()}>
-                    {news.post_auther}
-                    </a>
-                  </small>
-                  <span className='text-muted ms-50 me-25'>|</span>
-                  <small className='text-muted'>{news.post_created_at}</small>
-                </div>
-              </div>
-              <CardText className='blog-content-truncate'  dangerouslySetInnerHTML={sanitizeHTML(news.post_description)} />
+              <CardText className='blog-content-truncate'  dangerouslySetInnerHTML={sanitizeHTML(news.content)} />
               <hr />
               <div className='d-flex justify-content-between align-items-center'>
-                <Link className='fw-bold' to={`/articles/detail/${news._id}`}>
+                <Link className='fw-bold' to={`/articles/detail/${news.id}`}>
                   Read More
                 </Link>
               </div>

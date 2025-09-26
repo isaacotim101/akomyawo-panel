@@ -242,37 +242,37 @@ export default [
           {
             id: 'welcomeTemp',
             title: 'Welcome',
-            navLink: 'https://pixinvent.com/demo/African Hearts-mail-template/mail-welcome.html',
+            navLink: 'https://pixinvent.com/demo/Akomwayo Ministries-mail-template/mail-welcome.html',
             externalLink: true
           },
           {
             id: 'resetPassTemp',
             title: 'Reset Password',
-            navLink: 'https://pixinvent.com/demo/African Hearts-mail-template/mail-reset-password.html',
+            navLink: 'https://pixinvent.com/demo/Akomwayo Ministries-mail-template/mail-reset-password.html',
             externalLink: true
           },
           {
             id: 'verifyEmailTemp',
             title: 'Verify Email',
-            navLink: 'https://pixinvent.com/demo/African Hearts-mail-template/mail-verify-email.html',
+            navLink: 'https://pixinvent.com/demo/Akomwayo Ministries-mail-template/mail-verify-email.html',
             externalLink: true
           },
           {
             id: 'deactivateAccountTemp',
             title: 'Deactivate Account',
-            navLink: 'https://pixinvent.com/demo/African Hearts-mail-template/mail-deactivate-account.html',
+            navLink: 'https://pixinvent.com/demo/Akomwayo Ministries-mail-template/mail-deactivate-account.html',
             externalLink: true
           },
           {
             id: 'invoiceMailTemp',
             title: 'Invoice',
-            navLink: 'https://pixinvent.com/demo/African Hearts-mail-template/mail-invoice.html',
+            navLink: 'https://pixinvent.com/demo/Akomwayo Ministries-mail-template/mail-invoice.html',
             externalLink: true
           },
           {
             id: 'promotionalMailTemp',
             title: 'Promotional',
-            navLink: 'https://pixinvent.com/demo/African Hearts-mail-template/mail-promotional.html',
+            navLink: 'https://pixinvent.com/demo/Akomwayo Ministries-mail-template/mail-promotional.html',
             externalLink: true
           }
         ]

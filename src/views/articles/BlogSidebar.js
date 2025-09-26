@@ -21,13 +21,13 @@ const BlogSidebar = () => {
         <><div
           key={index} className={classnames('d-flex')}
         >
-          <Link className='me-2' to={`/articles/detail/${news._id}`}>
-            <img className='rounded' src={news.post_featured_image} alt={news.post_title} width='100' height='70' />
+          <Link className='me-2' to={`/articles/detail/${news.id}`}>
+            <img className='rounded' src={news.image_url} alt={news.title} width='100' height='70' />
           </Link>
           <div>
             <h6 className='blog-recent-post-title'>
-              <Link className='text-body-heading' to={`/articles/detail/${news._id}`}>
-                {news.post_title}
+              <Link className='text-body-heading' to={`/articles/detail/${news.id}`}>
+                {news.title}
               </Link>
             </h6>
           </div>

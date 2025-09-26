@@ -1,30 +1,61 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Row, Col, Card, CardBody, Form, Label, Input, Button } from 'reactstrap';
-import ReactQuill from 'react-quill'; // Import the react-quill component
-import 'react-quill/dist/quill.snow.css'; // Import the default styles
-import toast from 'react-hot-toast'
-
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import toast from 'react-hot-toast';
 
 const BlogEdit = () => {
-  const [data, setData] = useState(null);
-  const [post_title, setTitle] = useState('');
-  const [post_auther, setAuthor] = useState('');
-  const [post_description, setDescription] = useState('');
-  const [post_featured_image, setImage] = useState('');
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [uploading, setUploading] = useState(false);
 
-   // Event handler for submit button
+  // Handle image upload to Cloudinary
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+
+    const formData = new FormData();
+    formData.append('file', file);
+    // Replace with your own Cloudinary preset + cloud name
+    formData.append('upload_preset', 'akomyawo');
+
+    try {
+      const response = await fetch(
+        'https://api.cloudinary.com/v1_1/dw90vkmoc/image/upload',
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
+      const data = await response.json();
+
+      if (data.secure_url) {
+        setImageUrl(data.secure_url);
+        toast.success('Image uploaded successfully');
+      } else {
+        toast.error('Image upload failed');
+      }
+    } catch (error) {
+      toast.error('Error uploading image');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // Event handler for submit button
   const handleSubmit = () => {
-    // Make a PUT request to update the content
-    fetch(`https://african-hearts-api.vercel.app/api/v1/blogs`, {
+    fetch(`https://ako-api.vercel.app/posts`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        post_title: post_title,
-        post_auther: post_auther,
-        post_description: post_description, // Send updated content as is
-        post_featured_image: post_featured_image,
+        title: title,
+        content: content,
+        image_url: imageUrl,
       }),
     })
       .then((response) => {
@@ -33,18 +64,16 @@ const BlogEdit = () => {
         }
         return response.json();
       })
-      .then((responseData) => {
-
+      .then(() => {
         setTitle('');
-        setAuthor('');
-        setDescription('');
-        setImage('');
-        toast.success('Article Created successfully');
-        window.location = "/articles";
+        setContent('');
+        setImageUrl('');
+        toast.success('Article created successfully');
+        window.location = '/articles';
       })
-      .catch((error) => {
+      .catch(() => {
         toast.error('Something went wrong, try again');
-        window.location = "/articles";
+        window.location = '/articles';
       });
   };
 
@@ -55,44 +84,57 @@ const BlogEdit = () => {
           <Card>
             <CardBody>
               <Form className='mt-2'>
-                    <Row>
-                      <Col md='6' className='mb-2'>
-                        <Label className='form-label' htmlFor='blog-edit-title'>
-                          Title
-                        </Label>
-                        <Input
-                          id='blog-edit-title'
-                          onChange={(e) => setTitle(e.target.value)}
-                        />
-                      </Col>
-                      <Col md='6' className='mb-2'>
-                        <Label className='form-label' htmlFor='blog-edit-slug'>
-                          Author
-                        </Label>
-                        <Input
-                          id='blog-edit-slug'
-                          onChange={(e) => setAuthor(e.target.value)}
-                        />
-                      </Col>
+                <Row>
+                  <Col md='12' className='mb-2'>
+                    <Label className='form-label' htmlFor='blog-edit-title'>
+                      Title
+                    </Label>
+                    <Input
+                      id='blog-edit-title'
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                    />
+                  </Col>
 
-                      <Col sm='12' className='mb-2'>
-                        <Label className='form-label'>Content</Label>
-                        <ReactQuill
-                          onChange={(value) => setDescription(value)}
+                  <Col sm='12' className='mb-2'>
+                    <Label className='form-label'>Content</Label>
+                    <ReactQuill value={content} onChange={(value) => setContent(value)} />
+                  </Col>
+
+                  <Col className='mb-2' sm='12'>
+                    <Label className='form-label'>
+                      Featured Image | Required resolution 800x400
+                    </Label>
+                    <Input
+                      type='file'
+                      accept='image/*'
+                      onChange={handleImageUpload}
+                      disabled={uploading}
+                    />
+                    {uploading && <p>Uploading image...</p>}
+                    {imageUrl && (
+                      <div className='mt-2'>
+                        <img
+                          src={imageUrl}
+                          alt='Uploaded preview'
+                          style={{ width: '100%', maxWidth: '400px', borderRadius: '8px' }}
                         />
-                      </Col>
-                      <Col className='mb-2' sm='12'>
-                        
-                      <Label className='form-label'>Featured Image URL| Required image resolution 800x400</Label>
-                          <Input type='text' name='post_featured_image' onChange={(e) => setImage(e.target.value)} />
-                      </Col>
-                      <Col className='mt-50'>
-                        <Button color='primary' className='me-1' onClick={handleSubmit}>
-                          Save Changes
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Form>
+                      </div>
+                    )}
+                  </Col>
+
+                  <Col className='mt-50'>
+                    <Button
+                      color='primary'
+                      className='me-1'
+                      onClick={handleSubmit}
+                      disabled={uploading}
+                    >
+                      Save Changes
+                    </Button>
+                  </Col>
+                </Row>
+              </Form>
             </CardBody>
           </Card>
         </Col>

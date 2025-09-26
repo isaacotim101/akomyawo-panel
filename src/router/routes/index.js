@@ -33,7 +33,7 @@ const getLayout = {
 }
 
 // ** Document title
-const TemplateTitle = 'African Hearts Admin Dashboard'
+const TemplateTitle = 'Akomwayo Ministries Admin Dashboard'
 
 // ** Default Route
 const DefaultRoute = '/dashboard/home'

@@ -71,7 +71,7 @@ const Error = () => {
             </g>
           </g>
         </svg>
-        <h2 className='brand-text text-primary ms-1'>African Hearts</h2>
+        <h2 className='brand-text text-primary ms-1'>Akomwayo Ministries</h2>
       </a>
       <div className='misc-inner p-2 p-sm-3'>
         <div className='w-100 text-center'>

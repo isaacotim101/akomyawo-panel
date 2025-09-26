@@ -8,17 +8,16 @@ import toast from 'react-hot-toast'
 
 const BlogEdit = () => {
   const [data, setData] = useState(null);
-  const [post_title, setTitle] = useState('');
-  const [post_auther, setAuthor] = useState('');
-  const [post_description, setDescription] = useState('');
-  const [post_featured_image, setImage] = useState('');
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [image_url, setImage] = useState('');
 
   // Use useParams to get the id from the URL
   const { id } = useParams();
 
   useEffect(() => {
     // Make a GET request to the API endpoint using fetch
-    fetch(`https://african-hearts-api.vercel.app/api/v1/blogs/${id}`)
+    fetch(`https://ako-api.vercel.app/posts/${id}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -29,10 +28,9 @@ const BlogEdit = () => {
         // Check if the responseData is not null
         if (responseData) {
           setData(responseData);
-          setTitle(responseData.post_title);
-          setAuthor(responseData.post_auther);
-          setDescription(responseData.post_description);
-          setImage(responseData.post_featured_image);
+          setTitle(responseData.title);
+          setContent(responseData.content);
+          setImage(responseData.image_url);
         } else {
           // Handle the case when responseData is null
         }
@@ -45,16 +43,15 @@ const BlogEdit = () => {
   // Event handler for submit button
   const handleSubmit = () => {
     // Make a PUT request to update the content
-    fetch(`https://african-hearts-api.vercel.app/api/v1/blogs/${id}`, {
+    fetch(`https://ako-api.vercel.app/posts/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        post_title,
-        post_auther,
-        post_description, // Send updated content as is
-        post_featured_image,
+        title,
+        content, // Send updated content as is
+        image_url,
       }),
     })
       .then((response) => {
@@ -91,26 +88,16 @@ const BlogEdit = () => {
                         </Label>
                         <Input
                           id='blog-edit-title'
-                          value={post_title}
+                          value={title}
                           onChange={(e) => setTitle(e.target.value)}
-                        />
-                      </Col>
-                      <Col md='6' className='mb-2'>
-                        <Label className='form-label' htmlFor='blog-edit-slug'>
-                          Author
-                        </Label>
-                        <Input
-                          id='blog-edit-slug'
-                          value={post_auther}
-                          onChange={(e) => setAuthor(e.target.value)}
                         />
                       </Col>
 
                       <Col sm='12' className='mb-2'>
                         <Label className='form-label'>Content</Label>
                         <ReactQuill
-                          value={post_description}
-                          onChange={(value) => setDescription(value)}
+                          value={content}
+                          onChange={(value) => setContent(value)}
                         />
                       </Col>
                       <Col className='mb-2' sm='12'>
@@ -119,7 +106,7 @@ const BlogEdit = () => {
                           <div className='d-flex flex-column flex-md-row'>
                             <img
                               className='rounded me-2 mb-1 mb-md-0'
-                              src={post_featured_image}
+                              src={image_url}
                               alt='featured img'
                               width='170'
                               height='110'
@@ -130,7 +117,7 @@ const BlogEdit = () => {
                               </small>
                               <p className='my-50'>
                                 <a href='/' onClick={(e) => e.preventDefault()}>
-                                  {post_featured_image}
+                                  {image_url}
                                 </a>
                               </p>
                               <div className='d-inline-block'>

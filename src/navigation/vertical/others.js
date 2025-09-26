@@ -56,7 +56,7 @@ export default [
     icon: <Folder size={20} />,
     externalLink: true,
     newTab: true,
-    navLink: 'https://pixinvent.com/demo/African Hearts-react-admin-dashboard-template/documentation'
+    navLink: 'https://pixinvent.com/demo/Akomwayo Ministries-react-admin-dashboard-template/documentation'
   },
   {
     id: 'raiseSupport',

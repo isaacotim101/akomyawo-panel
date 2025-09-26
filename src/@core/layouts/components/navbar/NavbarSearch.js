@@ -95,7 +95,7 @@ const NavbarSearch = () => {
             filterKey='title'
             filterHeaderKey='groupTitle'
             grouped={true}
-            placeholder='Explore African Hearts...'
+            placeholder='Explore Akomwayo Ministries...'
             autoFocus={true}
             onSuggestionItemClick={handleSuggestionItemClick}
             externalClick={handleExternalClick}

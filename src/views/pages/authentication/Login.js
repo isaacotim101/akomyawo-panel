@@ -1,22 +1,21 @@
 import { useContext } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-
+//import axios from 'axios'
 // ** Custom Hooks
 import { useSkin } from '@hooks/useSkin'
-
-// ** Supabase
-import { createClient } from '@supabase/supabase-js'
+import useJwt from '@src/auth/jwt/useJwt'
 
 // ** Third Party Components
 import toast from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
 import { useForm, Controller } from 'react-hook-form'
-import React from 'react'
+//import axios from 'axios'
+import React, { useState, useEffect } from 'react';
 
-import { HelpCircle } from 'react-feather'
+// ** Custom Components
 // ** Actions
 import { handleLogin } from '@store/authentication'
-
+import Avatar from '@components/avatar'
 // ** Context
 import { AbilityContext } from '@src/utility/context/Can'
 
@@ -25,170 +24,159 @@ import InputPasswordToggle from '@components/input-password-toggle'
 
 // ** Utils
 import { getHomeRouteForLoggedInUser } from '@utils'
-
 // ** Reactstrap Imports
+import { Coffee, X } from 'react-feather'
 import {
   Form,
   Input,
   Label,
   Button,
-  CardText,
-  Card,
-  CardTitle,
-  CardBody,
+  CardText, Card, 
+  CardTitle, CardBody,
   FormFeedback
 } from 'reactstrap'
-
 // ** Styles
 import '@styles/react/pages/page-authentication.scss'
-
-// 🔑 Setup Supabase client (better to move into a separate file)
-const supabase = createClient(
-  process.env.REACT_APP_SUPABASE_URL,
-  process.env.REACT_APP_SUPABASE_ANON_KEY
-)
-
 const defaultValues = {
-  password: '',
-  loginEmail: ''
+  password: 'admin',
+  loginEmail: 'admin@demo.com'
 }
-
 const LoginBasic = () => {
-  const { skin } = useSkin()
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const ability = useContext(AbilityContext)
 
-  const {
-    control,
-    setError,
-    handleSubmit,
-    formState: { errors }
-  } = useForm({ defaultValues })
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+    const ability = useContext(AbilityContext)
+    const {
+      control,
+      handleSubmit,
+      formState: { errors }
+    } = useForm({ defaultValues })
 
-  const onSubmit = async data => {
-    if (Object.values(data).every(field => field.length > 0)) {
-      try {
-        const { data: authData, error } = await supabase.auth.signInWithPassword({
-          email: data.loginEmail,
-          password: data.password
-        })
-
-        if (error) {
-          setError('loginEmail', {
-            type: 'manual',
-            message: error.message
-          })
-          return
-        }
-
-        const user = authData.user
-        const session = authData.session
-
-        if (user && session) {
-          const loginPayload = {
-            ...user,
-            accessToken: session.access_token,
-            refreshToken: session.refresh_token
-          }
-
-          // Store in redux
-          dispatch(handleLogin(loginPayload))
-
-          // Update ability if you have roles stored in metadata
-          ability.update(user.app_metadata?.ability || [])
-
-          // Redirect to dashboard/home
-          navigate(getHomeRouteForLoggedInUser(user.role || 'admin'))
-
-          // Success toast
-          toast.success(`Welcome back, ${user.email}!`)
-        }
-      } catch (err) {
-        setError('loginEmail', {
-          type: 'manual',
-          message: err.message || 'Login failed'
-        })
-      }
-    } else {
-      for (const key in data) {
-        if (data[key].length === 0) {
-          setError(key, {
-            type: 'manual'
-          })
-        }
-      }
+    const ToastContent = ({ t, name, role }) => {
+      return (
+        <div className='d-flex'>
+          <div className='me-1'>
+            <Avatar size='sm' color='primary' icon={<Coffee size={12} />} />
+          </div>
+          <div className='d-flex flex-column'>
+            <div className='d-flex justify-content-between'>
+              <h6>{name}</h6>
+              <X size={12} className='cursor-pointer' onClick={() => toast.dismiss(t.id)} />
+            </div>
+            <span>You have successfully logged in as an {role} user toStock Managment System  Dashboard. Now you can start to explore. Enjoy!</span>
+          </div>
+        </div>
+      )
     }
-  }
+    
+   //const navigate = useNavigate()
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [items, setItems] = useState([]);
 
+
+      const formdata = {
+        email: email,
+        password: password
+    }
+  const onSubmit = (data, e) => { // Add 'e' here to access the event
+    e.preventDefault(); // Prevent the default form submission
+    //console.log('Data:', data);
+    if (Object.values(data).every(field => field.length > 0)) {
+      //console.log('Submitting data...');
+  
+      fetch('https://ako-api.vercel.app/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formdata),
+      })
+      .then(response => response.json()) // Parse the response as JSON
+        .then(data => {
+          //console.log("Response Data:", data.user.role); // Log the response data
+          localStorage.setItem('userDetails', JSON.stringify(data));
+          const rdata = { ...data.user, accessToken: data.token, refreshToken: data.token }
+            dispatch(handleLogin(rdata))
+            //console.log("deburging", rdata)
+            ability.update("Admin")
+            navigate(getHomeRouteForLoggedInUser(data.user.role))
+    //window.location = "/dashboard/home";
+            
+          //navigate(getHomeRouteForLoggedInUser(data.user.role))
+          const newData= {
+            "id": 1,
+            "fullName": data.user.displayName,
+            "username": data.user.username,
+            "avatar": data.user.avatar,
+            "email": data.user.email,
+            "role": data.user.role,
+            "ability": [
+              {
+                "action": "manage",
+                "subject": "all"
+              }
+            ],
+            "extras": {
+              "eCommerceCartItemsCount": 0
+            },
+            "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjk3MTM1NDAyLCJleHAiOjE2OTcxMzYwMDJ9.WTo44jaTWsf7_-4CuZgEu3HVFNsisiOeUEXheL1aVnY",
+            "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjk3MTM1NDAyLCJleHAiOjE2OTcxMzYwMDJ9.U1W8sZltLGmDN9xXtNoYY_P4NhcF7GWLpZN8jV0vOAE"
+          }
+          
+          localStorage.setItem('userData', JSON.stringify(newData));
+          
+         
+          window.location = "/dashboard/home";
+         toast(t => (
+           <ToastContent t={t} role={data.user.role} name={data.user.displayName} />
+         ))
+        })
+       
+        .catch(error => {
+          console.error('Error:', error);
+            toast.error('Error!!, Incorrect Email or Password entered, Please try again');
+        });
+      }
+    };
+  
   return (
     <div className='auth-wrapper auth-basic px-2'>
       <div className='auth-inner my-2'>
         <Card className='mb-0'>
           <CardBody>
             <Link className='brand-logo' to='/' onClick={e => e.preventDefault()}>
-              <h2 className='brand-text text-primary ms-1'>Admin Panel</h2>
+              
+              <h2 className='brand-text text-primary ms-1'>Akomwayo Ministries </h2>
             </Link>
             <CardTitle tag='h4' className='mb-1'>
-              Welcome Admin! 👋
+              Welcome to Akomwayo Ministries ! 👋
             </CardTitle>
-            <CardText className='mb-2'>
-              Please sign-in to your account and start the adventure
-            </CardText>
+            <CardText className='mb-2'>Please sign-in to your account and start the adventure</CardText>
             <Form className='auth-login-form mt-2' onSubmit={handleSubmit(onSubmit)}>
+
               <div className='mb-1'>
                 <Label className='form-label' for='login-email'>
                   Email
                 </Label>
-                <Controller
-                  id='loginEmail'
-                  name='loginEmail'
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      autoFocus
-                      type='email'
-                      placeholder='john@example.com'
-                      invalid={errors.loginEmail && true}
-                      {...field}
-                    />
-                  )}
+                <Input type='email' id='login-email' placeholder='john@example.com' autoFocus 
+                onChange={event => setEmail(event.target.value)}
                 />
-                {errors.loginEmail && (
-                  <FormFeedback>{errors.loginEmail.message}</FormFeedback>
-                )}
               </div>
               <div className='mb-1'>
                 <div className='d-flex justify-content-between'>
                   <Label className='form-label' for='login-password'>
                     Password
                   </Label>
-                  <Link to='/forgot-password'>
-                    <small>Forgot Password?</small>
-                  </Link>
-                </div>
-                <Controller
-                  id='password'
-                  name='password'
-                  control={control}
-                  render={({ field }) => (
-                    <InputPasswordToggle
-                      className='input-group-merge'
-                      invalid={errors.password && true}
-                      {...field}
-                    />
-                  )}
+                  </div>
+                <InputPasswordToggle className='input-group-merge' id='login-password' 
+                onChange={event => setPassword(event.target.value)}
                 />
-              </div>
-              <div className='form-check mb-1'>
-                <Input type='checkbox' id='remember-me' />
-                <Label className='form-check-label' for='remember-me'>
-                  Remember Me
-                </Label>
               </div>
               <Button type='submit' color='primary' block>
                 Sign in
               </Button>
+
             </Form>
           </CardBody>
         </Card>

@@ -68,7 +68,7 @@ const ResetPasswordBasic = () => {
                   </g>
                 </g>
               </svg>
-              <h2 className='brand-text text-primary ms-1'>African Hearts</h2>
+              <h2 className='brand-text text-primary ms-1'>Akomwayo Ministries</h2>
             </Link>
             <CardTitle tag='h4' className='mb-1'>
               Reset Password 🔒

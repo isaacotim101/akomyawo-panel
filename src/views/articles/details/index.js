@@ -42,7 +42,7 @@ const BlogDetails = () => {
   const { id } = useParams();
   useEffect(() => {
     // Make a GET request to the API endpoint using fetch
-    fetch(`https://african-hearts-api.vercel.app/api/v1/blogs/${id}`)
+    fetch(`https://ako-api.vercel.app/posts/${id}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -70,18 +70,11 @@ const BlogDetails = () => {
                 <Card className='mb-3'>
                   {data && (
                     <>
-                      <CardImg src={data.post_featured_image} className='img-fluid' top />
+                      <CardImg src={data.image_url} className='img-fluid' top />
                       <CardBody>
-                        <CardTitle tag='h4'>{data.post_title}</CardTitle>
-                        <div className='d-flex'>
-                          <div>
-                            <small className='text-muted me-25'>By</small>
-                            <small>{data.post_auther}</small>
-                            <span className='text-muted ms-50 me-25'>|</span>
-                            <small className='text-muted'>{data.post_created_at}</small>
-                          </div>
-                        </div>
-                        <div  dangerouslySetInnerHTML={sanitizeHTML(data.post_description)} />
+                        <CardTitle tag='h4'>{data.title}</CardTitle>
+                        
+                        <div  dangerouslySetInnerHTML={sanitizeHTML(data.content)} />
 
                         <hr className='my-2' />
                         <div className='d-flex align-items-center justify-content-between'>
@@ -91,7 +84,7 @@ const BlogDetails = () => {
                             </DropdownToggle>
                             <DropdownMenu end>
                               <DropdownItem className='py-50 px-1'>
-                              <Link to={`/delete?id=${data._id}&route=blogs`}>
+                              <Link to={`/delete?id=${data.id}&route=blogs`}>
                               <Delete size={18} /> Delete
                              </Link>
                               </DropdownItem>

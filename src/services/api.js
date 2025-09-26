@@ -1,5 +1,5 @@
 const baseUrl = "https://african-hearts-api.vercel.app/api/v1/";
-
+const newUrl = "https://ako-api.vercel.app/";
 export const getCauses = async () => {
   try {
     const response = await fetch(`${baseUrl}causes`);
@@ -32,7 +32,7 @@ export const getTotalCauses = async () => {
 
 export const getBlogs = async () => {
   try {
-    const response = await fetch(`${baseUrl}blogs`);
+    const response = await fetch(`${newUrl}posts`);
     if (!response.ok) {
       throw new Error("Request failed");
     }

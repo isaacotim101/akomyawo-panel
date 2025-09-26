@@ -17,7 +17,7 @@ const BoxedLayout = () => {
           <span>
             Please check the{' '}
             <a
-              href='https://pixinvent.com/demo/African Hearts-react-admin-dashboard-template/documentation/development/page-layouts'
+              href='https://pixinvent.com/demo/Akomwayo Ministries-react-admin-dashboard-template/documentation/development/page-layouts'
               target='_blank'
             >
               Layout boxed documentation

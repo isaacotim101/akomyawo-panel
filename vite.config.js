@@ -3,7 +3,7 @@ import * as path from 'path'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import NodeGlobalsPolyfillPlugin from '@esbuild-plugins/node-globals-polyfill'
-import nodePolyfills from 'vite-plugin-node-polyfills'
+import { nodePolyfills } from 'vite-plugin-node-polyfills' // ✅ use named export
 
 export default () => {
   return defineConfig({
@@ -60,27 +60,22 @@ export default () => {
       exclude: [],
       jsx: 'automatic'
     },
-    optimizeDeps: {
-      esbuildOptions: {
-        loader: {
-          '.js': 'jsx'
-        },
-        plugins: [
-          NodeGlobalsPolyfillPlugin({
-            buffer: true,
-            process: true
-          }),
-          {
-            name: 'load-js-files-as-jsx',
-            setup(build) {
-              build.onLoad({ filter: /src\\.*\.js$/ }, async args => ({
-                loader: 'jsx',
-                contents: await fs.readFileSync(args.path, 'utf8')
-              }))
-            }
-          }
-        ]
+optimizeDeps: {
+  esbuildOptions: {
+    loader: { '.js': 'jsx' },
+    plugins: [
+      {
+        name: 'load-js-files-as-jsx',
+        setup(build) {
+          build.onLoad({ filter: /src\\.*\.js$/ }, async args => ({
+            loader: 'jsx',
+            contents: await fs.readFileSync(args.path, 'utf8')
+          }))
+        }
       }
-    }
+    ]
+  }
+}
+
   })
 }
