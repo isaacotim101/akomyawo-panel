@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Avatar from '@components/avatar';
 import { Power } from 'react-feather';
 import { UncontrolledDropdown, DropdownMenu, DropdownToggle, DropdownItem } from 'reactstrap';
-
+import avatar from '@src/assets/images/logo/logo.jpg'
 const UserDropdown = () => {
   // ** Store Vars
   // const dispatch = useDispatch(); // You can add this back if needed
@@ -27,7 +27,7 @@ const UserDropdown = () => {
           <span className='user-name fw-bold'>{userData ? userData.userName : ''}</span>
           <span className='user-status'>{userData ? userData.userRole : ''}</span>
         </div>
-        <Avatar img={userData ? userData.avatar : ''} imgHeight='40' imgWidth='40' status='online' />
+        <Avatar img={avatar} imgHeight='40' imgWidth='40' status='online' />
       </DropdownToggle>
       <DropdownMenu end>
         <DropdownItem tag={Link} to='/login'>

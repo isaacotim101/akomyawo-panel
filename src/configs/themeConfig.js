@@ -1,12 +1,12 @@
 // Logo Import
-import logo from '@src/assets/images/logo/ah_logo.png'
+import logo from '@src/assets/images/logo/logo.jpg'
 
 // You can customize the template with the help of this file
 
 //Template config options
 const themeConfig = {
   app: {
-    appLogoImage: logo
+    
   },
   layout: {
     isRTL: false,

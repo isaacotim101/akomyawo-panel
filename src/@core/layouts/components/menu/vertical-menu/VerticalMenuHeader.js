@@ -52,7 +52,7 @@ const VerticalMenuHeader = props => {
       <ul className='nav navbar-nav flex-row'>
         <li className='nav-item me-auto'>
           <NavLink to={user ? getHomeRouteForLoggedInUser(user.role) : '/'} className='navbar-brand'>
-          <img className='fallback-logo' src={logo} alt='logo' width="80%"/>
+          <text>Akomwayo Ministries</text>
           </NavLink>
         </li>
         <li className='nav-item nav-toggle'>

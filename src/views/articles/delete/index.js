@@ -6,11 +6,11 @@ export default function Notifications(props) {
   const id = queryParameters.get("id")
   const route = queryParameters.get("route")
 
-  fetch(`https://african-hearts-api.vercel.app/api/v1/${route}/${id}`, { method: 'DELETE' })
+  fetch(`https://ako-api.vercel.app/${route}/${id}`, { method: 'DELETE' })
   .then(function (response) {
 
     toast.success('Deleted successfully')
-    window.location = "/";
+    window.location = "/dashboard/home";
 
     })
   

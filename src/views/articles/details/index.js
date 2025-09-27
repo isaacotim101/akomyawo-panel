@@ -84,7 +84,7 @@ const BlogDetails = () => {
                             </DropdownToggle>
                             <DropdownMenu end>
                               <DropdownItem className='py-50 px-1'>
-                              <Link to={`/delete?id=${data.id}&route=blogs`}>
+                              <Link to={`/delete?id=${data.id}&route=posts`}>
                               <Delete size={18} /> Delete
                              </Link>
                               </DropdownItem>

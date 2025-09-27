@@ -22,7 +22,7 @@ import { Toaster } from 'react-hot-toast'
 import './configs/i18n'
 
 // ** Spinner (Splash Screen)
-import Spinner from './@core/components/spinner/Fallback-spinner'
+//import Spinner from './@core/components/spinner/Fallback-spinner'
 
 // ** Ripple Button
 import './@core/components/ripple-button'
@@ -58,7 +58,7 @@ const root = createRoot(container)
 root.render(
   <BrowserRouter>
     <Provider store={store}>
-      <Suspense fallback={<Spinner />}>
+      <Suspense >
         <AbilityContext.Provider value={ability}>
           <ThemeContext>
             <LazyApp />

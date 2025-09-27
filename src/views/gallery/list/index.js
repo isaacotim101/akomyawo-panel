@@ -64,7 +64,7 @@ const BlogList = () => {
                     <Grid size={14} /> Actions
                   </DropdownToggle>
                   <DropdownMenu tag='ul' end>
-                    <DropdownItem tag={Link} to={`/delete?id=${gallery.id}&route=gallerys`}>
+                    <DropdownItem tag={Link} to={`/delete?id=${gallery.id}&route=galleries`}>
                       <MessageSquare className='me-1' size={14} />
                       <span className='align-middle'>Delete</span>
                     </DropdownItem>
