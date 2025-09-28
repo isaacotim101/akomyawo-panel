@@ -63,7 +63,7 @@ const LoginBasic = () => {
               <h6>{name}</h6>
               <X size={12} className='cursor-pointer' onClick={() => toast.dismiss(t.id)} />
             </div>
-            <span>You have successfully logged in as an {role} user toStock Managment System  Dashboard. Now you can start to explore. Enjoy!</span>
+            <span>You have successfully logged!</span>
           </div>
         </div>
       )
