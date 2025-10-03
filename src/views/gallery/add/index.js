@@ -4,73 +4,83 @@ import toast from 'react-hot-toast';
 
 const BlogEdit = () => {
   const [category, setCategory] = useState('');
-  const [image_url, setImage] = useState('');
+  const [imageUrls, setImageUrls] = useState([]); // Store multiple image URLs
   const [uploading, setUploading] = useState(false);
 
-  // Handle image upload to Cloudinary
+  // Handle multiple image uploads to Cloudinary
   const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const files = Array.from(e.target.files); // Convert FileList to array
+    if (!files.length) return;
 
     setUploading(true);
 
-    const formData = new FormData();
-    formData.append('file', file);
-    // replace with your Cloudinary upload preset + cloud name
-    formData.append('upload_preset', 'akomyawo');
-
     try {
-      const response = await fetch(
-        'https://api.cloudinary.com/v1_1/dw90vkmoc/image/upload',
-        {
-          method: 'POST',
-          body: formData,
+      const uploadPromises = files.map(async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', 'akomyawo'); // Replace with your Cloudinary upload preset
+
+        const response = await fetch(
+          'https://api.cloudinary.com/v1_1/dw90vkmoc/image/upload',
+          {
+            method: 'POST',
+            body: formData,
+          }
+        );
+
+        const data = await response.json();
+        if (!data.secure_url) {
+          throw new Error('Image upload failed');
         }
-      );
+        return data.secure_url;
+      });
 
-      const data = await response.json();
-
-      if (data.secure_url) {
-        setImage(data.secure_url);
-        toast.success('Image uploaded successfully');
-      } else {
-        toast.error('Image upload failed');
-      }
+      const uploadedUrls = await Promise.all(uploadPromises);
+      setImageUrls((prev) => [...prev, ...uploadedUrls]); // Append new URLs
+      toast.success(`${uploadedUrls.length} image(s) uploaded successfully`);
     } catch (error) {
-      toast.error('Error uploading image');
+      toast.error('Error uploading images');
     } finally {
       setUploading(false);
     }
   };
 
   // Event handler for submit button
-  const handleSubmit = () => {
-    fetch(`https://ako-api.vercel.app/galleries`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        category,
-        image_url,
-      }),
-    })
-      .then((response) => {
+  const handleSubmit = async () => {
+    if (!imageUrls.length || !category) {
+      toast.error('Please upload at least one image and select a category');
+      return;
+    }
+
+    try {
+      // Send a separate API request for each image URL
+      const submitPromises = imageUrls.map(async (image_url) => {
+        const response = await fetch(`https://ako-api.vercel.app/galleries`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            category,
+            image_url,
+          }),
+        });
+
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         return response.json();
-      })
-      .then(() => {
-        setImage('');
-        setCategory('');
-        toast.success('Gallery created successfully');
-        window.location = '/gallery';
-      })
-      .catch(() => {
-        toast.error('Something went wrong, try again');
-        window.location = '/gallery';
       });
+
+      await Promise.all(submitPromises);
+      setImageUrls([]);
+      setCategory('');
+      toast.success('Gallery entries created successfully');
+      window.location = '/gallery';
+    } catch (error) {
+      toast.error('Something went wrong, try again');
+      window.location = '/gallery';
+    }
   };
 
   return (
@@ -93,21 +103,30 @@ const BlogEdit = () => {
                   </Col>
 
                   <Col className='mb-2' sm='12'>
-                    <Label className='form-label'>Upload Image</Label>
+                    <Label className='form-label'>Upload Images</Label>
                     <Input
                       type='file'
                       accept='image/*'
+                      multiple // Enable multiple file selection
                       onChange={handleImageUpload}
                       disabled={uploading}
                     />
-                    {uploading && <p>Uploading image...</p>}
-                    {image_url && (
+                    {uploading && <p>Uploading images...</p>}
+                    {imageUrls.length > 0 && (
                       <div className='mt-2'>
-                        <img
-                          src={image_url}
-                          alt='Preview'
-                          style={{ width: '100%', maxWidth: '400px', borderRadius: '8px' }}
-                        />
+                        {imageUrls.map((url, index) => (
+                          <img
+                            key={index}
+                            src={url}
+                            alt={`Preview ${index + 1}`}
+                            style={{
+                              width: '100%',
+                              maxWidth: '200px',
+                              margin: '10px',
+                              borderRadius: '8px',
+                            }}
+                          />
+                        ))}
                       </div>
                     )}
                   </Col>
