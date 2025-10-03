@@ -42,7 +42,7 @@ const BlogDetails = () => {
   const { id } = useParams();
   useEffect(() => {
     // Make a GET request to the API endpoint using fetch
-    fetch(`https://african-hearts-api.vercel.app/api/v1/campaigns/${id}`)
+    fetch(`https://african-hearts-api.vercel.app/api/v1/projects/${id}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -84,12 +84,12 @@ const BlogDetails = () => {
                             </DropdownToggle>
                             <DropdownMenu end>
                               <DropdownItem className='py-50 px-1'>
-                              <Link to={`/delete?id=${data._id}&route=campaigns`}>
+                              <Link to={`/delete?id=${data._id}&route=projects`}>
                               <Delete size={18} /> Delete
                              </Link>
                               </DropdownItem>
                               <DropdownItem className='py-50 px-1'>
-                              <Link className='fw-bold' to={`/campaigns/edit/${id}`}>
+                              <Link className='fw-bold' to={`/projects/edit/${id}`}>
                               <Edit size={18} /> Edit
                               </Link>
                               </DropdownItem>

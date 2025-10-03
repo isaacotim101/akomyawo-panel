@@ -1,15 +1,15 @@
 // ** React Imports
 import { Link } from 'react-router-dom'
 import { Fragment, useState, useEffect } from 'react'
+//import Pic from 'https://res.cloudinary.com/dw90vkmoc/image/upload/v1687554830/slider5_qzhkuc.jpg';
 // ** Third Party Components
-import DOMPurify from 'dompurify'; // Import DOMPurify
 
 import { useFetch } from "../../../hooks/useSWR";
 
 
 // ** Custom Components
 import Sidebar from '../BlogSidebar'
-import Breadcrumbs from '@components/breadcrumbs/Campaigns'
+import Breadcrumbs from '@components/breadcrumbs/Projects'
 
 // ** Reactstrap Imports
 import {
@@ -28,33 +28,40 @@ import {
 
 // ** Styles
 import '@styles/base/pages/page-blog.scss'
+import DOMPurify from 'dompurify'; // Import DOMPurify
 
 const BlogList = () => {
-  const { GetCampaign } = useFetch();
-  const { data: Campaigns } = GetCampaign();
+  const { GetProject } = useFetch();
+  const { data: Projects } = GetProject();
   // ** States
   const sanitizeHTML = (html) => {
     return { __html: DOMPurify.sanitize(html) };
   };
-
+  const badgeColorsArr = {
+    Quote: 'light-info',
+    Fashion: 'light-primary',
+    Gaming: 'light-danger',
+    Video: 'light-warning',
+    Food: 'light-success'
+  }
   const renderRenderList = () => {
-    return Campaigns?.map((campaigns, index) => {
+    return Projects?.map((projects, index) => {
       return (
         <Col md='6'>
           <Card>
-            <Link to={`/campaigns/detail/${campaigns._id}`}>
-              <CardImg className='img-fluid' src={campaigns.image} alt="The Best Features Coming to iOS and Web design" top />
+            <Link to={`/projects/detail/${projects._id}`}>
+              <CardImg className='img-fluid' src={projects.image} alt="The Best Features Coming to iOS and Web design" top />
             </Link>
             <CardBody>
               <CardTitle tag='h4'>
-                <Link className='blog-title-truncate text-body-heading' to={`/campaigns/detail/${campaigns._id}`}>
-                {campaigns.title}
+                <Link className='blog-title-truncate text-body-heading' to={`/projects/detail/${projects._id}`}>
+                {projects.title}
                 </Link>
               </CardTitle>
-              <CardText className='blog-content-truncate'  dangerouslySetInnerHTML={sanitizeHTML(campaigns.body)} />
+              <CardText className='blog-content-truncate'  dangerouslySetInnerHTML={sanitizeHTML(projects.body)} />
               <hr />
               <div className='d-flex justify-content-between align-items-center'>
-                <Link className='fw-bold' to={`/campaigns/detail/${campaigns._id}`}>
+                <Link className='fw-bold' to={`/projects/detail/${projects._id}`}>
                   Read More
                 </Link>
               </div>
@@ -67,7 +74,7 @@ const BlogList = () => {
 
   return (
     <Fragment>
-      <Breadcrumbs data={[{ title: 'Compaigns' }]} />
+      <Breadcrumbs data={[{ title: 'Success Projects' }]} />
       <div className='blog-wrapper'>
         <div className='content-detached content-left'>
           <div className='content-body'>

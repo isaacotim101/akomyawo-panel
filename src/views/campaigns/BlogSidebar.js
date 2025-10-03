@@ -11,23 +11,23 @@ import { useFetch } from "../../hooks/useSWR";
 // ** Reactstrap Imports
 
 const BlogSidebar = () => {
-  const { GetCampaign } = useFetch();
-  const { data: Campaigns } = GetCampaign();
+  const { GetProject } = useFetch();
+  const { data: Projects } = GetProject();
   // ** States
 
   const renderRecentPosts = () => {
-    return Campaigns?.map((campaigns, index) => {
+    return Projects?.map((projects, index) => {
       return (
         <><div
           key={index} className={classnames('d-flex')}
         >
-          <Link className='me-2' to={`/campaigns/detail/${campaigns._id}`}>
-            <img className='rounded' src={campaigns.image} alt={campaigns.title} width='100' height='70' />
+          <Link className='me-2' to={`/projects/detail/${projects._id}`}>
+            <img className='rounded' src={projects.image} alt={projects.title} width='100' height='70' />
           </Link>
           <div>
             <h6 className='blog-recent-post-title'>
-              <Link className='text-body-heading' to={`/campaigns/detail/${campaigns._id}`}>
-                {campaigns.title}
+              <Link className='text-body-heading' to={`/projects/detail/${projects._id}`}>
+                {projects.title}
               </Link>
             </h6>
           </div>

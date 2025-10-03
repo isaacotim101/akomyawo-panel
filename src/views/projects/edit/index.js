@@ -17,7 +17,7 @@ const BlogEdit = () => {
 
   useEffect(() => {
     // Make a GET request to the API endpoint using fetch
-    fetch(`https://african-hearts-api.vercel.app/api/v1/projects/${id}`)
+    fetch(`https://ako-api.vercel.app/causes/${id}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -29,8 +29,8 @@ const BlogEdit = () => {
         if (responseData) {
           setData(responseData);
           setTitle(responseData.title);
-          setBody(responseData.body);
-          setImage(responseData.image);
+          setBody(responseData.content);
+          setImage(responseData.image_url);
         } else {
           // Handle the case when responseData is null
         }
@@ -43,15 +43,15 @@ const BlogEdit = () => {
   // Event handler for submit button
   const handleSubmit = () => {
     // Make a PUT request to update the content
-    fetch(`https://african-hearts-api.vercel.app/api/v1/projects/${id}`, {
+    fetch(`https://ako-api.vercel.app/causes/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         title,
-        body, // Send updated content as is
-        image,
+        content, // Send updated content as is
+        image_url,
       }),
     })
       .then((response) => {
@@ -68,7 +68,7 @@ const BlogEdit = () => {
       })
       .catch((error) => {
         toast.error('Something went wrong, try again');
-       window.location = "/projects";
+       // window.location = "/compaigns";
        console.log("error", error)
       });
   };
@@ -97,7 +97,7 @@ const BlogEdit = () => {
                       <Col sm='12' className='mb-2'>
                         <Label className='form-label'>Content</Label>
                         <ReactQuill
-                          value={body}
+                          value={content}
                           onChange={(value) => setBody(value)}
                         />
                       </Col>
@@ -107,7 +107,7 @@ const BlogEdit = () => {
                           <div className='d-flex flex-column flex-md-row'>
                             <img
                               className='rounded me-2 mb-1 mb-md-0'
-                              src={image}
+                              src={image_url}
                               alt='featured img'
                               width='170'
                               height='110'
@@ -118,7 +118,7 @@ const BlogEdit = () => {
                               </small>
                               <p className='my-50'>
                                 <a href='/' onClick={(e) => e.preventDefault()}>
-                                  {image}
+                                  {image_url}
                                 </a>
                               </p>
                               <div className='d-inline-block'>

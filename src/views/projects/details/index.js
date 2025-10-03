@@ -42,7 +42,7 @@ const BlogDetails = () => {
   const { id } = useParams();
   useEffect(() => {
     // Make a GET request to the API endpoint using fetch
-    fetch(`https://african-hearts-api.vercel.app/api/v1/projects/${id}`)
+    fetch(`https://ako-api.vercel.app/causes/${id}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -70,11 +70,11 @@ const BlogDetails = () => {
                 <Card className='mb-3'>
                   {data && (
                     <>
-                      <CardImg src={data.image} className='img-fluid' top />
+                      <CardImg src={data.image_url} className='img-fluid' top />
                       <CardBody>
                         <CardTitle tag='h4'>{data.title}</CardTitle>
                         
-                        <div  dangerouslySetInnerHTML={sanitizeHTML(data.body)} />
+                        <div  dangerouslySetInnerHTML={sanitizeHTML(data.content)} />
 
                         <hr className='my-2' />
                         <div className='d-flex align-items-center justify-content-between'>
@@ -84,7 +84,7 @@ const BlogDetails = () => {
                             </DropdownToggle>
                             <DropdownMenu end>
                               <DropdownItem className='py-50 px-1'>
-                              <Link to={`/delete?id=${data._id}&route=projects`}>
+                              <Link to={`/delete?id=${data.id}&route=causes`}>
                               <Delete size={18} /> Delete
                              </Link>
                               </DropdownItem>

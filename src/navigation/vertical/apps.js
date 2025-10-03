@@ -6,6 +6,12 @@ export default [
     header: 'Pages'
   },
   {
+    id: 'Programs',
+    title: 'projects',
+    icon: <FileText size={20} />,
+    navLink: '/projects'
+  },
+  {
     id: 'Cause',
     title: 'Blog',
     icon: <FileText size={20} />,

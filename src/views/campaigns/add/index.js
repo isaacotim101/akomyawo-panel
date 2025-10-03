@@ -14,7 +14,7 @@ const BlogEdit = () => {
    // Event handler for submit button
   const handleSubmit = () => {
     // Make a PUT request to update the content
-    fetch(`https://african-hearts-api.vercel.app/api/v1/campaigns`, {
+    fetch(`https://african-hearts-api.vercel.app/api/v1/projects`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -38,11 +38,11 @@ const BlogEdit = () => {
         setBody('');
         setImage('');
         toast.success('Article Created successfully');
-        window.location = "/compaigns";
+        window.location = "/projects";
       })
       .catch((error) => {
         //toast.error('Something went wrong, try again');
-        window.location = "/compaigns";
+        window.location = "/projects";
       });
   };
 

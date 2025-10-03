@@ -196,7 +196,7 @@ export const getProject = async () => {
 
 export const getCampaign = async () => {
   try {
-    const response = await fetch(`${baseUrl}campaigns`);
+    const response = await fetch(`${newUrl}causes`);
     if (!response.ok) {
       throw new Error("Request failed");
     }

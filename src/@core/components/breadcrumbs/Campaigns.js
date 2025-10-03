@@ -55,7 +55,7 @@ const BreadCrumbs = props => {
       <div className='content-header-right text-md-end col-md-3 col-12 d-md-block d-none'>
         <div className='breadcrumb-right dropdown'>
           <UncontrolledButtonDropdown  tag='ul' end>
-            <Link to='/compaigns/add'>
+            <Link to='/projects/add'>
             <DropdownToggle color='primary' className='btn-icon btn-round dropdown-toggle'>
             <Edit size={21} /> Add New Campaigns
           </DropdownToggle>
