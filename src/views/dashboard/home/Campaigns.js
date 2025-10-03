@@ -14,7 +14,7 @@ const Campaigns = () => {
 
   useEffect(() => {
     // Fetch data from the API
-    fetch('https://african-hearts-api.vercel.app/api/v1/campaigns')
+    fetch('https://ako-api.vercel.app/causes')
       .then((response) => response.json())
       .then((data) => {
         // Assuming the API response is an array of campaigns
@@ -34,7 +34,7 @@ const Campaigns = () => {
           <CardTitle tag='h5'>Compaigns and Fundraising</CardTitle>
           <CardText>Organisation Compaigns and Fundraising programs can be added, edited, and deleted under this section.</CardText>
           <h1 color='primary'>{campaignCount} Campaigns</h1>
-          <Link className='blog-title-truncate text-body-heading' to={`/compaigns`}>
+          <Link className='blog-title-truncate text-body-heading' to={`/projects`}>
           <Button color='primary'>
             Open
           </Button>

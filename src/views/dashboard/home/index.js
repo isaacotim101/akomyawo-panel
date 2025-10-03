@@ -25,6 +25,9 @@ const HomeDashboard = () => {
         <Col md='6'>
           <Gallary />
         </Col>
+        <Col md='6'>
+          <Campaigns />
+        </Col>
       </Row>
     </Fragment>
   )
