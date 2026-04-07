@@ -43,20 +43,29 @@ const BlogList = () => {
     Food: 'light-success'
   }
   const renderRenderList = () => {
-    return News?.map((news, index) => {
+    return News?.map(news => {
+      const attachmentCount = news.attachments ? news.attachments.length : 0
+
       return (
-        <Col md='6'>
+        <Col md='6' key={news.id || news.title}>
           <Card>
             <Link to={`/articles/detail/${news.id}`}>
-              <CardImg className='img-fluid' src={news.image_url} alt={news.title} top />
+              {news.image_url ? (
+                <CardImg className='img-fluid' src={news.image_url} alt={news.title} top />
+              ) : null}
             </Link>
             <CardBody>
               <CardTitle tag='h4'>
                 <Link className='blog-title-truncate text-body-heading' to={`/articles/detail/${news.id}`}>
-                {news.title}
+                  {news.title}
                 </Link>
               </CardTitle>
-              <CardText className='blog-content-truncate'  dangerouslySetInnerHTML={sanitizeHTML(news.content)} />
+              <CardText className='blog-content-truncate' dangerouslySetInnerHTML={sanitizeHTML(news.content)} />
+              {attachmentCount > 0 ? (
+                <div className='text-muted mb-1'>
+                  {attachmentCount} Attachment{attachmentCount > 1 ? 's' : ''}
+                </div>
+              ) : null}
               <hr />
               <div className='d-flex justify-content-between align-items-center'>
                 <Link className='fw-bold' to={`/articles/detail/${news.id}`}>

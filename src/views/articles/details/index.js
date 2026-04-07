@@ -24,7 +24,9 @@ import {
   DropdownMenu,
   DropdownItem,
   DropdownToggle,
-  UncontrolledDropdown
+  UncontrolledDropdown,
+  ListGroup,
+  ListGroupItem
 } from 'reactstrap'
 
 // ** Styles
@@ -60,6 +62,31 @@ const BlogDetails = () => {
       });
   }, [id]);
 
+  const renderAttachments = () => {
+    if (!data?.attachments?.length) return null
+
+    return (
+      <div className='mt-2'>
+        <h6 className='mb-1'>Attachments</h6>
+        <ListGroup flush>
+          {data.attachments.map((attachment, index) => {
+            const file = typeof attachment === 'string'
+              ? { url: attachment, name: attachment.split('/').pop() }
+              : attachment
+
+            return (
+              <ListGroupItem key={index} className='ps-0'>
+                <a href={file.url} target='_blank' rel='noreferrer'>
+                  {file.name}
+                </a>
+              </ListGroupItem>
+            )
+          })}
+        </ListGroup>
+      </div>
+    )
+  }
+
   return (
     <Fragment>
       <div className='blog-wrapper'>
@@ -74,8 +101,8 @@ const BlogDetails = () => {
                       <CardBody>
                         <CardTitle tag='h4'>{data.title}</CardTitle>
                         
-                        <div  dangerouslySetInnerHTML={sanitizeHTML(data.content)} />
-
+                        <div dangerouslySetInnerHTML={sanitizeHTML(data.content)} />
+                        {renderAttachments()}
                         <hr className='my-2' />
                         <div className='d-flex align-items-center justify-content-between'>
                           <UncontrolledDropdown className='dropdown-icon-wrapper'>
