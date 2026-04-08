@@ -63,13 +63,26 @@ const BlogDetails = () => {
   }, [id]);
 
   const renderAttachments = () => {
-    if (!data?.attachments?.length) return null
+    if (!data?.attachments) return null
+
+    // Parse attachments if it's a JSON string
+    let attachmentsArray = data.attachments
+    if (typeof attachmentsArray === 'string') {
+      try {
+        attachmentsArray = JSON.parse(attachmentsArray)
+      } catch (e) {
+        console.error('Failed to parse attachments:', e)
+        return null
+      }
+    }
+
+    if (!Array.isArray(attachmentsArray) || attachmentsArray.length === 0) return null
 
     return (
       <div className='mt-2'>
         <h6 className='mb-1'>Attachments</h6>
         <ListGroup flush>
-          {data.attachments.map((attachment, index) => {
+          {attachmentsArray.map((attachment, index) => {
             const file = typeof attachment === 'string'
               ? { url: attachment, name: attachment.split('/').pop() }
               : attachment
