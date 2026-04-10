@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Editor } from '@tinymce/tinymce-react';
 import toast from 'react-hot-toast';
-import { uploadToSupabase, deleteFromSupabase } from '../../../services/supabase';
+
 
 /* ─── Styles ──────────────────────────────────────────────────────────────── */
 const styles = `
@@ -270,20 +270,35 @@ const styles = `
   @keyframes indeterminate { 0% { transform: translateX(-100%); width: 60%; } 100% { transform: translateX(200%); width: 60%; } }
 `;
 
-/* ─── Helpers ─────────────────────────────────────────────────────────────── */
-const supabaseUpload = async file => {
-  try {
-    const result = await uploadToSupabase(file);
-    return {
-      url: result.url,
-      name: result.name,
-      type: result.type,
-      path: result.path
-    };
-  } catch (error) {
-    console.error('Supabase upload error:', error);
-    throw error;
+/* ─── Cloudinary upload helpers ────────────────────────────────────────── */
+const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dw90vkmoc/auto/upload';
+const CLOUDINARY_UPLOAD_PRESET = 'akomyawo';
+
+const cloudinaryUpload = async file => {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+  formData.append('resource_type', 'auto');
+
+  const response = await fetch(CLOUDINARY_URL, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error('Upload failed');
   }
+
+  const data = await response.json();
+  if (!data.secure_url) {
+    throw new Error('Upload did not return a URL');
+  }
+
+  return {
+    url: data.secure_url,
+    name: file.name,
+    type: file.type,
+  };
 };
 
 const fileIcon = type => {
@@ -351,7 +366,7 @@ const CauseCreate = () => {
     setUploadingInline(true);
     try {
       for (const file of files) {
-        const uploaded = await supabaseUpload(file);
+        const uploaded = await cloudinaryUpload(file);
         insertImageIntoEditor(uploaded.url);
       }
       toast.success('Image(s) inserted into content');
@@ -570,7 +585,7 @@ const CauseCreate = () => {
                 )}
               </label>
               <Editor
-                apiKey={process.env.REACT_APP_TINYMCE_API_KEY || 'your-tinymce-api-key'} // TinyMCE API key from env
+                apiKey='kzshyr32cegezar1183g90mca0d2ccybauf2s3xwe50lcxhu'
                 onInit={(evt, editor) => quillRef.current = editor}
                 value={content}
                 onEditorChange={(newContent) => setContent(newContent)}
@@ -590,7 +605,7 @@ const CauseCreate = () => {
                   images_upload_handler: async (blobInfo, progress) => {
                     try {
                       const file = new File([blobInfo.blob()], blobInfo.filename(), { type: blobInfo.blob().type });
-                      const result = await uploadToSupabase(file);
+                      const result = await cloudinaryUpload(file);
                       return result.url;
                     } catch (error) {
                       console.error('Image upload failed:', error);

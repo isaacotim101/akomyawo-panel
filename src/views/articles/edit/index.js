@@ -14,7 +14,36 @@ import {
 } from 'reactstrap';
 import { Editor } from '@tinymce/tinymce-react';
 import toast from 'react-hot-toast';
-import { uploadToSupabase, deleteFromSupabase } from '../../../services/supabase';
+
+const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dw90vkmoc/auto/upload';
+const CLOUDINARY_UPLOAD_PRESET = 'akomyawo';
+
+const cloudinaryUpload = async file => {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+  formData.append('resource_type', 'auto');
+
+  const response = await fetch(CLOUDINARY_URL, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error('Upload failed');
+  }
+
+  const data = await response.json();
+  if (!data.secure_url) {
+    throw new Error('Upload did not return a URL');
+  }
+
+  return {
+    url: data.secure_url,
+    name: file.name,
+    type: file.type,
+  };
+};
 
 const BlogEdit = () => {
   const navigate = useNavigate();
@@ -58,28 +87,13 @@ const BlogEdit = () => {
       });
   }, [id]);
 
-  const supabaseUpload = async (file) => {
-    try {
-      const result = await uploadToSupabase(file);
-      return {
-        url: result.url,
-        name: result.name,
-        type: result.type,
-        path: result.path
-      };
-    } catch (error) {
-      console.error('Supabase upload error:', error);
-      throw error;
-    }
-  };
-
   const handleImageUpload = async e => {
     const file = e.target.files[0];
     if (!file) return;
     setUploadingImage(true);
 
     try {
-      const uploaded = await supabaseUpload(file);
+      const uploaded = await cloudinaryUpload(file);
       setImage(uploaded.url);
       toast.success('Featured image uploaded');
     } catch (error) {
@@ -96,7 +110,7 @@ const BlogEdit = () => {
     setUploadingAttachments(true);
 
     try {
-      const uploadedFiles = await Promise.all(files.map(file => supabaseUpload(file)));
+      const uploadedFiles = await Promise.all(files.map(file => cloudinaryUpload(file)));
       setAttachments(prev => [...prev, ...uploadedFiles]);
       toast.success(`${uploadedFiles.length} attachment(s) uploaded`);
     } catch (error) {
@@ -159,7 +173,7 @@ const BlogEdit = () => {
                     <Col sm='12' className='mb-2'>
                       <Label className='form-label'>Content</Label>
                       <Editor
-                        apiKey={process.env.REACT_APP_TINYMCE_API_KEY || 'your-tinymce-api-key'} // TinyMCE API key from env
+                        apiKey='kzshyr32cegezar1183g90mca0d2ccybauf2s3xwe50lcxhu'
                         onInit={(evt, editor) => editorRef.current = editor}
                         value={content}
                         onEditorChange={(newContent) => setContent(newContent)}
@@ -179,7 +193,7 @@ const BlogEdit = () => {
                           images_upload_handler: async (blobInfo, progress) => {
                             try {
                               const file = new File([blobInfo.blob()], blobInfo.filename(), { type: blobInfo.blob().type });
-                              const result = await uploadToSupabase(file);
+                              const result = await cloudinaryUpload(file);
                               return result.url;
                             } catch (error) {
                               console.error('Image upload failed:', error);
