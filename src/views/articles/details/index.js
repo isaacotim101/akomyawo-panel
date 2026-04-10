@@ -5,7 +5,13 @@ import { Link, useParams } from 'react-router-dom';
 import {
   Grid,
   Delete,
-  Edit
+  Edit,
+  Download,
+  Share2,
+  Copy,
+  Facebook,
+  Twitter,
+  Linkedin
 } from 'react-feather'
 
 // ** Utils
@@ -40,6 +46,7 @@ const BlogDetails = () => {
   };
   // ** State
   const [data, setData] = useState(null);
+  const [copyFeedback, setCopyFeedback] = useState(false);
   // Use useParams to get the id from the URL
   const { id } = useParams();
   useEffect(() => {
@@ -89,7 +96,8 @@ const BlogDetails = () => {
 
             return (
               <ListGroupItem key={index} className='ps-0'>
-                <a href={file.url} target='_blank' rel='noreferrer'>
+                <a href={file.url} target='_blank' rel='noreferrer' className='d-flex align-items-center'>
+                  <Download size={16} className='me-2' />
                   {file.name}
                 </a>
               </ListGroupItem>
@@ -98,6 +106,30 @@ const BlogDetails = () => {
         </ListGroup>
       </div>
     )
+  }
+
+  const handleCopyLink = () => {
+    const url = window.location.href
+    navigator.clipboard.writeText(url).then(() => {
+      setCopyFeedback(true)
+      setTimeout(() => setCopyFeedback(false), 2000)
+    });
+  }
+
+  const handleShareFacebook = () => {
+    const url = window.location.href
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank')
+  }
+
+  const handleShareTwitter = () => {
+    const url = window.location.href
+    const text = `Check this out: ${data?.title}`
+    window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank')
+  }
+
+  const handleShareLinkedin = () => {
+    const url = window.location.href
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank')
   }
 
   return (
@@ -118,23 +150,48 @@ const BlogDetails = () => {
                         {renderAttachments()}
                         <hr className='my-2' />
                         <div className='d-flex align-items-center justify-content-between'>
-                          <UncontrolledDropdown className='dropdown-icon-wrapper'>
-                            <DropdownToggle color='primary' className='btn-icon btn-round dropdown-toggle'>
-                              <Grid size={21} /> More Actions
-                            </DropdownToggle>
-                            <DropdownMenu end>
-                              <DropdownItem className='py-50 px-1'>
-                              <Link to={`/delete?id=${data.id}&route=posts`}>
-                              <Delete size={18} /> Delete
-                             </Link>
-                              </DropdownItem>
-                              <DropdownItem className='py-50 px-1'>
-                              <Link className='fw-bold' to={`/articles/edit/${id}`}>
-                              <Edit size={18} /> Edit
-                              </Link>
-                              </DropdownItem>
-                            </DropdownMenu>
-                          </UncontrolledDropdown>
+                          <div className='d-flex gap-1'>
+                            <UncontrolledDropdown className='dropdown-icon-wrapper'>
+                              <DropdownToggle color='primary' className='btn-icon btn-round dropdown-toggle'>
+                                <Share2 size={21} /> Share
+                              </DropdownToggle>
+                              <DropdownMenu end>
+                                <DropdownItem className='py-50 px-1' onClick={handleCopyLink}>
+                                  <Copy size={18} className='me-2' />
+                                  {copyFeedback ? 'Link Copied!' : 'Copy Link'}
+                                </DropdownItem>
+                                <DropdownItem className='py-50 px-1' onClick={handleShareFacebook}>
+                                  <Facebook size={18} className='me-2' />
+                                  Share on Facebook
+                                </DropdownItem>
+                                <DropdownItem className='py-50 px-1' onClick={handleShareTwitter}>
+                                  <Twitter size={18} className='me-2' />
+                                  Share on Twitter
+                                </DropdownItem>
+                                <DropdownItem className='py-50 px-1' onClick={handleShareLinkedin}>
+                                  <Linkedin size={18} className='me-2' />
+                                  Share on LinkedIn
+                                </DropdownItem>
+                              </DropdownMenu>
+                            </UncontrolledDropdown>
+                            <UncontrolledDropdown className='dropdown-icon-wrapper'>
+                              <DropdownToggle color='primary' className='btn-icon btn-round dropdown-toggle'>
+                                <Grid size={21} /> More Actions
+                              </DropdownToggle>
+                              <DropdownMenu end>
+                                <DropdownItem className='py-50 px-1'>
+                                <Link to={`/delete?id=${data.id}&route=posts`}>
+                                <Delete size={18} /> Delete
+                               </Link>
+                                </DropdownItem>
+                                <DropdownItem className='py-50 px-1'>
+                                <Link className='fw-bold' to={`/articles/edit/${id}`}>
+                                <Edit size={18} /> Edit
+                                </Link>
+                                </DropdownItem>
+                              </DropdownMenu>
+                            </UncontrolledDropdown>
+                          </div>
                         </div>
                       </CardBody>
                     </>

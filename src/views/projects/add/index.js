@@ -1,11 +1,8 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import { Editor } from '@tinymce/tinymce-react';
 import toast from 'react-hot-toast';
-
-const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dw90vkmoc/auto/upload';
-const CLOUDINARY_UPLOAD_PRESET = 'akomyawo';
+import { uploadToSupabase, deleteFromSupabase } from '../../../services/supabase';
 
 /* ─── Styles ──────────────────────────────────────────────────────────────── */
 const styles = `
@@ -274,16 +271,19 @@ const styles = `
 `;
 
 /* ─── Helpers ─────────────────────────────────────────────────────────────── */
-const cloudinaryUpload = async file => {
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-  formData.append('resource_type', 'auto');
-  const response = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
-  if (!response.ok) throw new Error('Upload failed');
-  const data = await response.json();
-  if (!data.secure_url) throw new Error('Upload did not return a URL');
-  return { url: data.secure_url, name: file.name, type: file.type };
+const supabaseUpload = async file => {
+  try {
+    const result = await uploadToSupabase(file);
+    return {
+      url: result.url,
+      name: result.name,
+      type: result.type,
+      path: result.path
+    };
+  } catch (error) {
+    console.error('Supabase upload error:', error);
+    throw error;
+  }
 };
 
 const fileIcon = type => {
@@ -327,8 +327,21 @@ const CauseCreate = () => {
   const insertImageIntoEditor = useCallback(url => {
     const quill = quillRef.current?.getEditor();
     if (!quill) return;
-    const range = quill.getSelection(true);
+    
+    // Ensure editor is focused
+    quill.focus();
+    
+    // Get current selection or use end of document
+    let range = quill.getSelection(true);
+    if (!range) {
+      // If no selection, insert at the end of the document
+      const length = quill.getLength();
+      range = { index: length - 1, length: 0 };
+    }
+    
+    // Insert image
     quill.insertEmbed(range.index, 'image', url);
+    // Move cursor after the image
     quill.setSelection(range.index + 1);
   }, []);
 
@@ -338,7 +351,7 @@ const CauseCreate = () => {
     setUploadingInline(true);
     try {
       for (const file of files) {
-        const uploaded = await cloudinaryUpload(file);
+        const uploaded = await supabaseUpload(file);
         insertImageIntoEditor(uploaded.url);
       }
       toast.success('Image(s) inserted into content');
@@ -349,6 +362,74 @@ const CauseCreate = () => {
       e.target.value = '';
     }
   };
+
+  /* ── Setup image resizing ── */
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // Find the editor container associated with this component
+      const editorContainers = document.querySelectorAll('.ql-editor');
+      if (editorContainers.length === 0) return;
+      
+      // Use the last one (most likely to be our current editor)
+      const editorContainer = editorContainers[editorContainers.length - 1];
+
+      const setupImageResize = (img) => {
+        if (img.dataset.resizeSetup) return;
+        img.dataset.resizeSetup = 'true';
+        
+        img.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          const startX = e.clientX;
+          const startWidth = img.width;
+          const startHeight = img.height;
+          const aspectRatio = startWidth / startHeight;
+          
+          img.classList.add('resizing');
+          
+          const handleMouseMove = (moveEvent) => {
+            const deltaX = moveEvent.clientX - startX;
+            const newWidth = Math.max(100, startWidth + deltaX);
+            const newHeight = newWidth / aspectRatio;
+            
+            img.style.width = newWidth + 'px';
+            img.style.height = newHeight + 'px';
+          };
+          
+          const handleMouseUp = () => {
+            img.classList.remove('resizing');
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+          };
+          
+          document.addEventListener('mousemove', handleMouseMove);
+          document.addEventListener('mouseup', handleMouseUp);
+        });
+      };
+      
+      // Setup existing images
+      editorContainer.querySelectorAll('img').forEach(setupImageResize);
+      
+      // Watch for new images added to editor
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.type === 'childList') {
+            mutation.addedNodes.forEach((node) => {
+              if (node.nodeName === 'IMG') setupImageResize(node);
+              else if (node.querySelectorAll) {
+                node.querySelectorAll('img').forEach(setupImageResize);
+              }
+            });
+          }
+        });
+      });
+      
+      observer.observe(editorContainer, { childList: true, subtree: true });
+      
+      return () => observer.disconnect();
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   /* ── Quill toolbar ── */
   const modules = {
@@ -488,13 +569,39 @@ const CauseCreate = () => {
                   </span>
                 )}
               </label>
-              <ReactQuill
-                ref={quillRef}
+              <Editor
+                apiKey={process.env.REACT_APP_TINYMCE_API_KEY || 'your-tinymce-api-key'} // TinyMCE API key from env
+                onInit={(evt, editor) => quillRef.current = editor}
                 value={content}
-                onChange={setContent}
-                modules={modules}
-                formats={FORMATS}
-                placeholder='Describe the project, its goals, and impact. Use the image icon in the toolbar to embed photos directly into the content…'
+                onEditorChange={(newContent) => setContent(newContent)}
+                init={{
+                  height: 400,
+                  menubar: false,
+                  plugins: [
+                    'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                    'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                    'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+                  ],
+                  toolbar: 'undo redo | blocks | ' +
+                    'bold italic forecolor | alignleft aligncenter ' +
+                    'alignright alignjustify | bullist numlist outdent indent | ' +
+                    'removeformat | image media link | code fullscreen',
+                  content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+                  images_upload_handler: async (blobInfo, progress) => {
+                    try {
+                      const file = new File([blobInfo.blob()], blobInfo.filename(), { type: blobInfo.blob().type });
+                      const result = await uploadToSupabase(file);
+                      return result.url;
+                    } catch (error) {
+                      console.error('Image upload failed:', error);
+                      throw new Error('Image upload failed');
+                    }
+                  },
+                  image_advtab: true,
+                  image_title: true,
+                  automatic_uploads: true,
+                  file_picker_types: 'image',
+                }}
               />
               <p style={{ fontSize: '0.75rem', color: '#999', marginTop: '0.4rem' }}>
                 💡 Tip: click the <strong>image icon</strong> in the toolbar to embed images inline within your content.
