@@ -41,7 +41,8 @@ const styles = `
     letter-spacing: -0.02em;
     margin: 0;
     white-space: nowrap;
-  }
+  } 
+    
   .blog-editor-root .editor-header .cause-badge {
     font-size: 0.7rem;
     font-weight: 600;
