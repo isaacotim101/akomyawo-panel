@@ -32,7 +32,7 @@ import DOMPurify from 'dompurify'; // Import DOMPurify
 
 const BlogList = () => {
   const { GetSuccess } = useFetch();
-  const { data: Stories } = GetSuccess();
+  const { data: Sponsors } = GetSuccess();
   // ** States
   const sanitizeHTML = (html) => {
     return { __html: DOMPurify.sanitize(html) };
@@ -45,24 +45,27 @@ const BlogList = () => {
     Food: 'light-success'
   }
   const renderRenderList = () => {
-    return Stories?.map((stories, index) => {
+    return Sponsors?.map((sponsor, index) => {
       return (
         <Col md='6'>
           <Card>
-            <Link to={`/stories/detail/12`}>
-              <CardImg className='img-fluid' src={stories.image} alt="The Best Features Coming to iOS and Web design" top />
+            <Link to={`/sponsor/detail/${sponsor._id || sponsor.id}`}>
+              <CardImg className='img-fluid' src={sponsor.image_link} alt={sponsor.name} top />
             </Link>
             <CardBody>
               <CardTitle tag='h4'>
-                <Link className='blog-title-truncate text-body-heading' to={`/stories/detail/${stories._id}`}>
-                {stories.title}
+                <Link className='blog-title-truncate text-body-heading' to={`/sponsor/detail/${sponsor._id || sponsor.id}`}>
+                {sponsor.name}
                 </Link>
               </CardTitle>
-              <CardText className='blog-content-truncate'  dangerouslySetInnerHTML={sanitizeHTML(stories.description)} />
+              <div className='mb-2'>
+                <h5 className='text-primary'>${sponsor.amount_to_donate?.toFixed(2)}</h5>
+              </div>
+              <CardText className='blog-content-truncate'  dangerouslySetInnerHTML={sanitizeHTML(sponsor.description)} />
               <hr />
               <div className='d-flex justify-content-between align-items-center'>
-                <Link className='fw-bold' to={`/stories/detail/${stories._id}`}>
-                  Read More
+                <Link className='fw-bold' to={`/sponsor/detail/${sponsor._id || sponsor.id}`}>
+                  View Details
                 </Link>
               </div>
             </CardBody>
@@ -74,7 +77,7 @@ const BlogList = () => {
 
   return (
     <Fragment>
-      <Breadcrumbs data={[{ title: 'Success Stories' }]} />
+      <Breadcrumbs data={[{ title: 'Sponsors' }]} />
       <div className='blog-wrapper'>
         <div className='content-detached content-left'>
           <div className='content-body'>

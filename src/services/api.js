@@ -166,12 +166,12 @@ export const getUsers = async () => {
 
 export const getSuccess = async () => {
   try {
-    const response = await fetch(`${baseUrl}success`);
+    const response = await fetch(`https://ako-api.vercel.app/sponsors`);
     if (!response.ok) {
       throw new Error("Request failed");
     }
     const data = await response.json();
-    console.log("fetch success - response:", data);
+    console.log("fetch sponsors - response:", data);
     return data;
   } catch (error) {
     // Handle errors here

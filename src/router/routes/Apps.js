@@ -22,10 +22,10 @@ const CompaignsDetails = lazy(() => import('../../views/campaigns/details'))
 const CompaignsEdit = lazy(() => import('../../views/campaigns/edit'))
 const CompaignsAdd = lazy(() => import('../../views/campaigns/add'))
 
-const Stories = lazy(() => import('../../views/stories/list'))
-const StoriesDetails = lazy(() => import('../../views/stories/details'))
-const StoriesEdit = lazy(() => import('../../views/stories/edit'))
-const StoriesAdd = lazy(() => import('../../views/stories/add'))
+const Stories = lazy(() => import('../../views/sponsor/list'))
+const StoriesDetails = lazy(() => import('../../views/sponsor/details'))
+const StoriesEdit = lazy(() => import('../../views/sponsor/edit'))
+const StoriesAdd = lazy(() => import('../../views/sponsor/add'))
 
 const Projects = lazy(() => import('../../views/projects/list'))
 const ProjectsDetails = lazy(() => import('../../views/projects/details'))
@@ -125,19 +125,35 @@ const AppRoutes = [
   },
   {
     element: <Stories />,
-    path: '/stories'
+    path: '/sponsor'
   },
   {
     element: <StoriesDetails />,
-    path: '/stories/detail/:id'
+    path: '/sponsor/detail/:id'
   },
   {
     element: <StoriesEdit />,
-    path: '/stories/edit/:id'
+    path: '/sponsor/edit/:id'
   },
   {
     element: <StoriesAdd />,
-    path: '/stories/add'
+    path: '/sponsor/add'
+  },
+  {
+    path: '/dashboard/sponsor',
+    element: <Navigate replace to='/sponsor' />
+  },
+  {
+    path: '/dashboard/sponsor/detail/:id',
+    element: <Navigate replace to='/sponsor/detail/:id' />
+  },
+  {
+    path: '/dashboard/sponsor/edit/:id',
+    element: <Navigate replace to='/sponsor/edit/:id' />
+  },
+  {
+    path: '/dashboard/sponsor/add',
+    element: <Navigate replace to='/sponsor/add' />
   },
   {
     element: <Projects />,

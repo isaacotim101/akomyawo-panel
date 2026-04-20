@@ -55,9 +55,9 @@ const BreadCrumbs = props => {
       <div className='content-header-right text-md-end col-md-3 col-12 d-md-block d-none'>
         <div className='breadcrumb-right dropdown'>
           <UncontrolledButtonDropdown  tag='ul' end>
-            <Link to='/stories/add'>
+            <Link to='/sponsor/add'>
             <DropdownToggle color='primary' className='btn-icon btn-round dropdown-toggle'>
-            <Edit size={21} /> Add Success Stories
+            <Edit size={21} /> Add Sponsor
           </DropdownToggle>
             </Link>
           </UncontrolledButtonDropdown>

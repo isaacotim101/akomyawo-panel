@@ -11,7 +11,7 @@ import { Row, Col } from 'reactstrap'
 import Campaigns from './Campaigns'
 import Projects from './Projects'
 import TeamMembers from './Team'
-import Success from './Success'
+import Sponsor from './Sponsor'
 import NewsArticles from './Articles'
 import Gallary from './Gallery'
 
@@ -27,6 +27,9 @@ const HomeDashboard = () => {
         </Col>
         <Col md='6'>
           <Campaigns />
+        </Col>
+        <Col md='6'>
+          <Sponsor />
         </Col>
       </Row>
     </Fragment>

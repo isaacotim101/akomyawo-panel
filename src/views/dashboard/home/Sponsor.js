@@ -16,7 +16,7 @@ const PricingExample = () => {
 
   useEffect(() => {
     // Fetch data from the API
-    fetch('https://african-hearts-api.vercel.app/api/v1/success')
+    fetch('https://ako-api.vercel.app/sponsors')
       .then((response) => response.json())
       .then((data) => {
         // Assuming the API response is an array of success
@@ -34,9 +34,9 @@ const PricingExample = () => {
       <Card>
         <CardBody className='text-center'>
           <Award className='font-large-2 mb-1' />
-          <CardTitle tag='h5'>Sponsors</CardTitle>
-          <CardText>Sponsors of the Organisation can be added, edited, and deleted under this section.</CardText>
-          <h1 color='primary'>{successCount} Sponsors</h1>
+          <CardTitle tag='h5'>Sponsor</CardTitle>
+          <CardText>Sponsor program of the Organisation can be added, edited, and deleted under this section.</CardText>
+          <h1 color='primary'>{successCount} Stories</h1>
           <Link className='blog-title-truncate text-body-heading' to={`/sponsor`}>
           <Button color='primary'>
             Open

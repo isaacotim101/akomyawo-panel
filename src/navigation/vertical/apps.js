@@ -18,6 +18,12 @@ export default [
     navLink: '/articles'
   },
   {
+    id: 'sponsors',
+    title: 'Sponsors',
+    icon: <Gift size={20} />,
+    navLink: '/sponsor'
+  },
+  {
     id: 'gallery',
     title: 'Gallery',
     icon: <Camera size={20} />,

@@ -89,7 +89,7 @@ const BlogDetails = () => {
                              </Link>
                               </DropdownItem>
                               <DropdownItem className='py-50 px-1'>
-                              <Link className='fw-bold' to={`/stories/edit/${id}`}>
+                              <Link className='fw-bold' to={`/sponsor/edit/${id}`}>
                               <Edit size={18} /> Edit
                               </Link>
                               </DropdownItem>

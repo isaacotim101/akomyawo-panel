@@ -12,24 +12,27 @@ import { useFetch } from "../../hooks/useSWR";
 
 const BlogSidebar = () => {
   const { GetSuccess } = useFetch();
-  const { data: Stories } = GetSuccess();
+  const { data: Sponsors } = GetSuccess();
   // ** States
 
   const renderRecentPosts = () => {
-    return Stories?.map((stories, index) => {
+    return Sponsors?.map((sponsor, index) => {
       return (
         <><div
           key={index} className={classnames('d-flex')}
         >
-          <Link className='me-2' to={`/stories/detail/${stories._id}`}>
-            <img className='rounded' src={stories.image} alt={stories.title} width='100' height='70' />
+          <Link className='me-2' to={`/sponsor/detail/${sponsor._id || sponsor.id}`}>
+            <img className='rounded' src={sponsor.image_link} alt={sponsor.name} width='100' height='70' />
           </Link>
           <div>
             <h6 className='blog-recent-post-title'>
-              <Link className='text-body-heading' to={`/stories/detail/${stories._id}`}>
-                {stories.title}
+              <Link className='text-body-heading' to={`/sponsor/detail/${sponsor._id || sponsor.id}`}>
+                {sponsor.name}
               </Link>
             </h6>
+            <div className='text-primary fw-bold'>
+              ${sponsor.amount_to_donate?.toFixed(2)}
+            </div>
           </div>
         </div><br></br></>
       )

@@ -42,7 +42,7 @@ const BlogDetails = () => {
   const { id } = useParams();
   useEffect(() => {
     // Make a GET request to the API endpoint using fetch
-    fetch(`https://african-hearts-api.vercel.app/api/v1/success/${id}`)
+    fetch(`https://ako-api.vercel.app/sponsors/${id}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -70,10 +70,13 @@ const BlogDetails = () => {
                 <Card className='mb-3'>
                   {data && (
                     <>
-                      <CardImg src={data.image} className='img-fluid' top />
+                      <CardImg src={data.image_link} className='img-fluid' top />
                       <CardBody>
-                        <CardTitle tag='h4'>{data.title}</CardTitle>
-                        
+                        <CardTitle tag='h4'>{data.name}</CardTitle>
+                        <div className='mb-3'>
+                          <h3 className='text-primary'>${data.amount_to_donate?.toFixed(2)}</h3>
+                          <small className='text-muted'>Donation Amount</small>
+                        </div>
                         <div  dangerouslySetInnerHTML={sanitizeHTML(data.description)} />
 
                         <hr className='my-2' />
@@ -84,12 +87,12 @@ const BlogDetails = () => {
                             </DropdownToggle>
                             <DropdownMenu end>
                               <DropdownItem className='py-50 px-1'>
-                              <Link to={`/delete?id=${data._id}&route=success`}>
+                              <Link to={`/delete?id=${data._id || data.id}&route=sponsors`}>
                               <Delete size={18} /> Delete
                              </Link>
                               </DropdownItem>
                               <DropdownItem className='py-50 px-1'>
-                              <Link className='fw-bold' to={`/stories/edit/${id}`}>
+                              <Link className='fw-bold' to={`/sponsor/edit/${id}`}>
                               <Edit size={18} /> Edit
                               </Link>
                               </DropdownItem>

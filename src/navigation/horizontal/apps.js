@@ -9,7 +9,8 @@ import {
   FileText,
   CheckSquare,
   ShoppingCart,
-  MessageSquare
+  MessageSquare,
+  Gift
 } from 'react-feather'
 
 export default [
@@ -147,6 +148,12 @@ export default [
             navLink: '/apps/user/view'
           }
         ]
+      },
+      {
+        id: 'sponsors',
+        title: 'Sponsors',
+        icon: <Gift />,
+        navLink: '/sponsor'
       }
     ]
   }

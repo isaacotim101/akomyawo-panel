@@ -76,4 +76,26 @@
       @extend .main-menu;
     }
   }
+
+  // Mobile menu toggle icons
+  .icon-menu {
+    display: block;
+    cursor: pointer;
+  }
+
+  .icon-x {
+    display: none;
+    cursor: pointer;
+  }
+
+  &.menu-open {
+    .icon-menu {
+      display: none;
+    }
+
+    .icon-x {
+      display: block;
+    }
+  }
 }
+
